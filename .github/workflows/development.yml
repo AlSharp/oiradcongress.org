@@ -4,7 +4,7 @@ name: Build and Deploy
 # events but only for the main branch
 on:
   push:
-    branches: [master]
+    branches: [develop]
   workflow_dispatch:
     inputs:
       logLevel:
@@ -27,10 +27,10 @@ jobs:
       - name: Build and Publish to Github Packages Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         env:
-          PORT: ${{ secrets.PROD_PORT }}
-          BRANCH: master
+          PORT: ${{ secrets.DEV_PORT }}
+          BRANCH: develop
         with:
-          name: alsharp/oiradcongress.org/oiradcongress
+          name: alsharp/oiradcongress.org/oiradcongress_dev
           registry: ghcr.io
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets. GITHUB_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
           envs: GITHUB_USERNAME, GITHUB_TOKEN
           script: |
             docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
-            docker pull ghcr.io/alsharp/oiradcongress.org/oiradcongress:latest
-            docker stop oiradcongress
+            docker pull ghcr.io/alsharp/oiradcongress.org/oiradcongress_dev:latest
+            docker stop oiradcongress_dev
             docker system prune -f
-            docker run --name oiradcongress -dit -p 5200:5200 ghcr.io/alsharp/oiradcongress.org/oiradcongress:latest
+            docker run --name oiradcongress_dev -dit -p 5201:5201 ghcr.io/alsharp/oiradcongress.org/oiradcongress_dev:latest
